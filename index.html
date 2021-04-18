@@ -39,38 +39,73 @@
                               <div id="3" class="button" onclick="updateDisp(this.id)">3</div>
                             </div>
                             <div class="calc-button-row">
-                                <div id="backspace" class="button" onclick="updateDisp(this.id)"><</div>
+                                <!-- <div id="backspace" class="button" onclick="updateDisp(this.id)"><</div> -->
                                 <div id="0" class="button" onclick="updateDisp(this.id)">0</div>
-                                <div id="clear" class="button" onclick="updateDisp(this.id)">C</div>
+                                <!-- <div id="clear" class="button" onclick="updateDisp(this.id)">C</div> -->
                             </div>
                             <div>
-                                <button type="submit" class="submit-btn">Submit</button>
-                                <p class="action-left">3 try left</p>
+                                <button type="submit" id="btn-submit" class="submit-btn">Submit</button>
+                                <p id="tries" class="action-left">3 try left</p>
                             </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="notify" class="notify-section">
-            <p class="notify">❌ Pin Didn't Match, Please try again</p>
-            <p class="notify">✅ Pin Matched... Secret door is opening for you</p>
+        <div id="notification" class="notify-section">
+            <p id="fail" class="notify">❌ Pin Didn't Match, Please try again</p>
+            <p id="success" class="notify">✅ Pin Matched... Secret door is opening for you</p>
+            <p id="zero-tries" class="notify">❌ No remaining Tries. Click Generate Pin to generate new pin and try again.</p>
         </div>
-
     </div>
     
     <script>
         var Pin = "";
         var enteredNum = "";
 
-        //  hide the fail and success message
-        const notifySection = document.getElementById("notify");
+        // Hide fail and success message
+        const notifySection = document.getElementById("notification");
         notifySection.style.display ="none";
 
         // Generate pin button event handler
         const GeneratorBtn = document.getElementById("generator");
         GeneratorBtn.addEventListener("click", function(){
             const generatedPin = generatePin("display-pin");
+            resetTry("tries");
+            hideNotification();
+            Pin = "";
+            document.getElementById("display-area").value =  "";
         })
+        
+
+        // Submit button event handler
+        const  submitBtn = document.getElementById("btn-submit");
+        submitBtn.addEventListener("click", function(){
+            let disp =  document.getElementById("display-area").value;
+            if (disp.length == 4) {
+                enteredNum = document.getElementById("display-area").value;
+                console.log(enteredNum+ "enum")
+                randomNum = getGeneratedNum("display-pin");
+                console.log(randomNum+"rnum");
+                if (enteredNum == randomNum) {
+                    resetTry("tries");
+                    updateNotification("success", "fail");
+                } else {
+                    updateNotification("fail", "success");
+                    var remainingTry = tryLeft("tries");
+                    document.getElementById("display-area").value = "";
+                    if (remainingTry==0) {
+                        Pin = "1234";
+                        zeroTry("zero-tries");
+                    }
+                }
+            } 
+        })
+
+        // funciton to hide notification
+        function hideNotification() {
+            const  notifySection = document.getElementById("notification");
+            notifySection.style.display = "none";
+        }
 
         // function to generate a random 4 digit pin and display
         function generatePin(id2) {
@@ -78,17 +113,70 @@
             document.getElementById(id2).value = randomPin;
             return randomPin;
         }
-        
+
+        // updates the display with the 4 digit pin
         function updateDisp(clicked_id) {
-            const displayArea = document.getElementById("display-area").innerText;
-            const clickedBtn = parseFloat(clicked_id);
-            console.log(clickedBtn);
-            console.log(typeof(clickedBtn));
+        var displayArea = document.getElementById("display-area")
+        const clickedBtn = clicked_id;
+        // var Pin="";
+        if (Pin.length < 4) {
+                Pin = Pin.concat(clickedBtn);
+                displayArea.value = Pin;
+                if (Pin.length==4) {
+                    Pin = "";
+                }
+            }
         }
-        // const test = document.getElementById("4").innerText;
-        // const integer = parseFloat(test);
-        // console.log(integer);
-        console.log(42)
+
+        // function to get the generated number
+        function getGeneratedNum(id) {
+            let generatedNum = document.getElementById(id).value;
+            return generatedNum;
+        }
+
+        // function to update notification area
+        function updateNotification(id1, id2) {
+            //  id1 for success, id2 for failure
+            notifySection.style.display = "block";
+            let Text1 = document.getElementById(id2);
+            Text1.style.display = "none";                
+            let Text2 = document.getElementById(id1);
+            Text2.style.display = "block";
+            document.getElementById("zero-tries").style.display = "none";
+        }
+
+        // Resets  the total number of tries  to 3 after successful pin
+        function resetTry(id) {
+            let numTry = document.getElementById(id).innerText;
+            var  num = numTry.substring(1);
+            num = "3" + num;
+            document.getElementById(id).innerText = num;
+        }
+        //  Function to  update the  remaining tries after failure
+        function tryLeft(id) {
+            const tryNum = document.getElementById(id).innerText;
+            var subTry = tryNum[0]-1;
+            var tryText = tryNum.substring(1);
+            tryText = subTry + tryText;
+            document.getElementById(id).innerText = tryText;
+            return subTry;
+        }
+
+        // If zero tries remain
+        function zeroTry(id) {
+            let message = document.getElementById(id);
+            notifySection.style.display = "block";
+            let Text1 = document.getElementById("success");
+            Text1.style.display = "none";                
+            let Text2 = document.getElementById("fail");
+            Text2.style.display = "none";
+            message.style.display = "block";
+        }
+
+        // function errorMessage() {
+        //     const notificationArea = document.getElementById("notification");
+        //     notificationArea.innerHTML += "<p>Pin must be equal to 4 digits</p>";
+        // }
     </script>
 </body>
 </html>
