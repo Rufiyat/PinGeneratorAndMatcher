@@ -1,5 +1,6 @@
 # Pin Generator and Matcher
 A pin generator and matcher built using JavaScript, HTML5, CSS, and Bootstrap.
+The website's URL: https://rufiyat.github.io/PinGeneratorAndMatcher/
 
 Click the generate pin button to create a random pin. If the pin you entered matches the  randomly generated pin, a success message will be displayed. You can then generate another pin or close.
 
