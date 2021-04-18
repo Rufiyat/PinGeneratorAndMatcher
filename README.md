@@ -7,3 +7,4 @@ Click the generate pin button to create a random pin. If the pin you entered mat
 Notes:
 1. Pin must be 4 digits long
 2. If length of entered pin is greater than 4 digits, the display area resets the pin and you can enter another 4 digit pin. You don't loose a try for this.
+3. If length of entered pin is less than 4 digits, submit button will not do anything. 
